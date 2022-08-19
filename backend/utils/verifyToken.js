@@ -12,16 +12,18 @@ export const verifyToken = (req, res, next) => {
 };
 
 export const verifyUser = (req, res, next) => {
+  if (!req.user) return next(createError(401, "You are not authentificated!"));
   verifyToken(req, res, () => {
     if (req.user.id === req.params.id || req.user.isAdmin) next();
     else return next(createError(401, "You are not authorized!"));
   });
 };
 
-// probleme si luser nest ^pas admin
+// probleme si user nest pas admin if adding next
 export const verifyAdmin = (req, res, next) => {
+  if (!req.user) return next(createError(401, "You are not authentificated!"));
   verifyToken(req, res, () => {
-    if (req.user.isAdmin) return next();
+    if (req.user.isAdmin) next();
     else return next(createError(401, "You are not authorized!"));
   });
 };

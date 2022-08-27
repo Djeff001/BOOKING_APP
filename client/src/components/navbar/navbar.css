@@ -14,8 +14,26 @@
   justify-content: space-between;
 }
 
+
 .logo{
   font-weight: 500;
+  
+}
+
+
+
+img {
+  height: 18px;
+  width: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-items: center;
+  height: 100%;
+  background: #ccc;
+}
+
+.logout{
+  display: flex;
 }
 
 .navButton{
@@ -25,3 +43,4 @@
   cursor: pointer;
   color: #003580;
 }
+

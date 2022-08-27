@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
+const maxAge = 3 * 60 * 1000;
+
 export const register = async (req, res, next) => {
   try {
     const salt = bcrypt.genSaltSync(10);
@@ -32,14 +34,22 @@ export const login = async (req, res, next) => {
 
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
-      process.env.JWT
+      process.env.JWT,
+      {
+        expiresIn: maxAge,
+      }
     );
     const { password, isAdmin, ...otherDetails } = user._doc;
     res
-      .cookie("access_token", token, { httpOnly: true })
+      .cookie("access_token", token, { httpOnly: false, maxAge: maxAge })
       .status(201)
       .json({ ...otherDetails });
   } catch (err) {
     next(err);
   }
+};
+
+export const logout = (req, res) => {
+  res.cookie("access_token", "", { maxAge: 1 });
+  res.redirect("/");
 };

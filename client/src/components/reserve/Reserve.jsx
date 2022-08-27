@@ -7,11 +7,13 @@ import { SearchContext } from "../../context/SearchContext";
 import "./reserve.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext.js";
 
 const Reserve = ({ setOpen, hotelId }) => {
   const [selectedRooms, setSelectedRooms] = useState([]);
-  const { data, loading } = useFetch("/hotels/room/6301009bea826608f652b333");
+  const { data, loading } = useFetch("/hotels/room/" + hotelId);
   const { dates } = useContext(SearchContext);
+  const { dispatch } = useContext(AuthContext);
 
   const handleSelect = (e) => {
     const checked = e.target.checked;
@@ -47,63 +49,73 @@ const Reserve = ({ setOpen, hotelId }) => {
   };
 
   const handleClick = async () => {
-    // promise used when we call map function
-    try {
-      await Promise.all(
-        selectedRooms.map((roomId) => {
-          const res = axios.put("/rooms/availability/" + roomId, {
-            dates: alldates,
-          });
-          return res.data;
-        })
-      );
+    if (!document.cookie) {
+      dispatch({ type: "LOGOUT" });
       setOpen(false);
-      navigate("/");
-    } catch (err) {}
+      navigate("/login");
+    }
+    // promise used when we call map function
+    else {
+      try {
+        await Promise.all(
+          selectedRooms.map((roomId) => {
+            return axios.put("/rooms/availability/" + roomId, {
+              dates: alldates,
+            });
+          })
+        );
+        setOpen(false);
+        navigate("/");
+      } catch (err) {}
+    }
   };
 
   return (
     <div className="reserve">
-      <div className="rContainer">
-        <FontAwesomeIcon
-          icon={faCircleXmark}
-          className="rClose"
-          onClick={() => setOpen(false)}
-        />
-        <span>Select your room:</span>
-        {data.map((room) => {
-          return (
-            <div className="rItem" key={room._id}>
-              <div className="rItemInfo">
-                <div className="rTitle">{room.title}</div>
-                <div className="rDesc">{room.desc}</div>
-                <div className="rMax">
-                  Max people: <b>{room.maxPeople}</b>
+      {loading ? (
+        "Wait for loading"
+      ) : (
+        <div className="rContainer">
+          <FontAwesomeIcon
+            icon={faCircleXmark}
+            className="rClose"
+            onClick={() => setOpen(false)}
+          />
+          <span>Select your room:</span>
+          {data.map((room) => {
+            return (
+              <div className="rItem" key={room._id}>
+                <div className="rItemInfo">
+                  <div className="rTitle">{room.title}</div>
+                  <div className="rDesc">{room.desc}</div>
+                  <div className="rMax">
+                    Max people: <b>{room.maxPeople}</b>
+                  </div>
+                  <div className="rPrice">{room.price}</div>
                 </div>
-                <div className="rPrice">{room.price}</div>
+                <div className="rSelectRooms">
+                  {room.roomNumbers.map((roomNumber) => {
+                    return (
+                      <div className="room" key={roomNumber._id}>
+                        <label>{roomNumber.number}</label>
+                        <input
+                          type="checkbox"
+                          value={roomNumber._id}
+                          onChange={handleSelect}
+                          disabled={!isAailable(roomNumber)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="rSelectRooms">
-                {room.roomNumbers.map((roomNumber) => {
-                  return (
-                    <div className="room" key={roomNumber._id}>
-                      <label>{roomNumber.number}</label>
-                      <input
-                        type="checkbox"
-                        value={roomNumber._id}
-                        onChange={handleSelect}
-                        disabled={!isAailable(roomNumber)}
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
-        <button onClick={handleClick} className="rButton">
-          Reserve Now!
-        </button>
-      </div>
+            );
+          })}
+          <button onClick={handleClick} className="rButton">
+            Reserve Now!
+          </button>
+        </div>
+      )}
     </div>
   );
 };

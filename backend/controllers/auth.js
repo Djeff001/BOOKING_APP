@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import { createError } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 
-const maxAge = 3 * 60 * 1000;
+const maxAge = 3 * 60 * 1000 * 24;
 
 export const register = async (req, res, next) => {
   try {
@@ -43,7 +43,7 @@ export const login = async (req, res, next) => {
     res
       .cookie("access_token", token, { httpOnly: false, maxAge: maxAge })
       .status(201)
-      .json({ ...otherDetails });
+      .json({ details: { ...otherDetails }, isAdmin });
   } catch (err) {
     next(err);
   }

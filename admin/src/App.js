@@ -3,12 +3,15 @@ import Login from "./pages/login/Login";
 import List from "./pages/list/List";
 import Single from "./pages/single/Single";
 import New from "./pages/new/New";
+import NewHotel from "./pages/newHotel/NewHotel";
+import NewRoom from "./pages/newRoom/NewRoom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { productInputs, userInputs } from "./formSource";
+import { hotelInputs, productInputs, userInputs } from "./formSource";
 import "./style/dark.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/AuthContext.js";
+import { hotelColumns, roomColumns, userColumns } from "./datatablesource";
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
@@ -38,7 +41,7 @@ function App() {
                 index
                 element={
                   <ProtectedRoute>
-                    <List />
+                    <List columns={userColumns} />
                   </ProtectedRoute>
                 }
               />
@@ -55,12 +58,23 @@ function App() {
                 element={<New inputs={userInputs} title="Add New User" />}
               />
             </Route>
-            <Route path="products">
-              <Route index element={<List />} />
-              <Route path=":productId" element={<Single />} />
+            <Route path="hotels">
+              <Route index element={<List columns={hotelColumns} />} />
+              <Route path=":hotelId" element={<Single />} />
               <Route
                 path="new"
-                element={<New inputs={productInputs} title="Add New Product" />}
+                element={
+                  <NewHotel inputs={hotelInputs} title="Add New Hotel" />
+                }
+              />
+            </Route>
+
+            <Route path="rooms">
+              <Route index element={<List columns={roomColumns} />} />
+              <Route path=":roomId" element={<Single />} />
+              <Route
+                path="new"
+                element={<NewRoom inputs={hotelInputs} title="Add New Room" />}
               />
             </Route>
           </Route>

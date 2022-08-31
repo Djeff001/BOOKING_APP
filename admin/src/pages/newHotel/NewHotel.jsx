@@ -1,37 +1,42 @@
-import "./new.scss";
+import "./newHotel.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const New = ({ inputs, title }) => {
+const NewHotel = ({ inputs, title }) => {
   const [file, setFile] = useState("");
+  const location = useLocation();
+  const path = location.pathname.split("/")[1];
   const navigate = useNavigate();
 
-  const [userInfo, setUserInfo] = useState({});
+  const [user, setUser] = useState({
+    username: undefined,
+    email: undefined,
+    phone: undefined,
+    password: undefined,
+    country: undefined,
+    city: undefined,
+    img: undefined,
+  });
 
   const handleChange = (e) => {
-    setUserInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    setUser((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
   const handleClick = async (e) => {
     e.preventDefault();
-
-    const newUser = {
-      ...userInfo,
-      img: file
-        ? URL.createObjectURL(file)
-        : "https://i.ibb.co/MBtjqXQ/no-avatar.gif",
-    };
+    file
+      ? setUser((prev) => ({ ...prev, img: URL.createObjectURL(file) }))
+      : console.log(file);
+    console.log(user);
 
     try {
-      await axios.post("/auth/register", newUser);
-      navigate("/users");
-    } catch (err) {
-      console.log(err);
-    }
+      await axios.post("/auth/register", user);
+      navigate("/");
+    } catch (err) {}
   };
 
   return (
@@ -87,4 +92,4 @@ const New = ({ inputs, title }) => {
   );
 };
 
-export default New;
+export default NewHotel;

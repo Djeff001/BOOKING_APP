@@ -4,39 +4,45 @@ import Navbar from "../../components/navbar/Navbar";
 import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
 import { useState } from "react";
 import axios from "axios";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { hotelInputs } from "../../formSource";
+import useFetch from "../../hooks/useFetch";
 
-const NewHotel = ({ inputs, title }) => {
-  const [file, setFile] = useState("");
-  const location = useLocation();
-  const path = location.pathname.split("/")[1];
+const NewHotel = () => {
+  const [files, setFiles] = useState("");
   const navigate = useNavigate();
-
-  const [user, setUser] = useState({
-    username: undefined,
-    email: undefined,
-    phone: undefined,
-    password: undefined,
-    country: undefined,
-    city: undefined,
-    img: undefined,
-  });
+  const { data, loading } = useFetch("/rooms");
+  const [hotelInfo, setHotelInfo] = useState({});
 
   const handleChange = (e) => {
-    setUser((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    setHotelInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSelect = (e) => {
+    const selectedRooms = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
+    setHotelInfo((prev) => ({ ...prev, [e.target.id]: selectedRooms }));
   };
 
   const handleClick = async (e) => {
     e.preventDefault();
-    file
-      ? setUser((prev) => ({ ...prev, img: URL.createObjectURL(file) }))
-      : console.log(file);
-    console.log(user);
+    let imgRooms = [];
+    for (let i = 0; i < files.length; i++) {
+      imgRooms.push(URL.createObjectURL(files[i]));
+    }
+    const newHotel = {
+      ...hotelInfo,
+      img: imgRooms,
+    };
 
     try {
-      await axios.post("/auth/register", user);
-      navigate("/");
-    } catch (err) {}
+      await axios.post("/Hotels", newHotel);
+      navigate("/hotels");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -45,14 +51,14 @@ const NewHotel = ({ inputs, title }) => {
       <div className="newContainer">
         <Navbar />
         <div className="top">
-          <h1>{title}</h1>
+          <h1>Add New Hotel</h1>
         </div>
         <div className="bottom">
           <div className="left">
             <img
               src={
-                file
-                  ? URL.createObjectURL(file)
+                files
+                  ? URL.createObjectURL(files[0])
                   : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"
               }
               alt=""
@@ -67,12 +73,13 @@ const NewHotel = ({ inputs, title }) => {
                 <input
                   type="file"
                   id="file"
-                  onChange={(e) => setFile(e.target.files[0])}
+                  multiple
+                  onChange={(e) => setFiles(e.target.files)}
                   style={{ display: "none" }}
                 />
               </div>
 
-              {inputs.map((input) => (
+              {hotelInputs.map((input) => (
                 <div className="formInput" key={input.id}>
                   <label>{input.label}</label>
                   <input
@@ -83,6 +90,28 @@ const NewHotel = ({ inputs, title }) => {
                   />
                 </div>
               ))}
+              <div className="formInput">
+                <label>Featured</label>
+                <select id="featured" onChange={handleChange}>
+                  <option value={false}>No</option>
+                  <option value={true}>Yes</option>
+                </select>
+              </div>
+              <div className="selectRooms">
+                <label>Rooms</label>
+                <select id="rooms" multiple onChange={handleSelect}>
+                  {loading
+                    ? "Loading"
+                    : data &&
+                      data.map((room) => {
+                        return (
+                          <option value={room._id} key={room._id}>
+                            {room.title}
+                          </option>
+                        );
+                      })}
+                </select>
+              </div>
               <button onClick={handleClick}>Send</button>
             </form>
           </div>

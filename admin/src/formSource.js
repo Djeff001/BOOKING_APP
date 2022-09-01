@@ -50,6 +50,12 @@ export const hotelInputs = [
     placeholder: "Hotel",
   },
   {
+    id: "city",
+    label: "City",
+    type: "text",
+    placeholder: "in stock",
+  },
+  {
     id: "address",
     label: "Address",
     type: "text",
@@ -57,7 +63,7 @@ export const hotelInputs = [
   },
   {
     id: "distance",
-    label: "Distance",
+    label: "Distance from City Center",
     type: "text",
     placeholder: "100",
   },
@@ -65,7 +71,7 @@ export const hotelInputs = [
     id: "title",
     label: "Title",
     type: "text",
-    placeholder: "in stock",
+    placeholder: "The best hotel",
   },
   {
     id: "desc",
@@ -74,27 +80,9 @@ export const hotelInputs = [
     placeholder: "in stock",
   },
   {
-    id: "city",
-    label: "City",
-    type: "text",
-    placeholder: "in stock",
-  },
-  {
-    id: "rating",
-    label: "Rating",
-    type: "number",
-    placeholder: "5",
-  },
-  {
-    id: "rooms",
-    label: "Rooms",
-    type: "text",
-    placeholder: "in stock",
-  },
-  {
     id: "cheapestPrice",
     label: "Price",
-    type: "text",
-    placeholder: "in stock",
+    type: "number",
+    placeholder: 200,
   },
 ];

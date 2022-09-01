@@ -61,12 +61,7 @@ function App() {
             <Route path="hotels">
               <Route index element={<List columns={hotelColumns} />} />
               <Route path=":hotelId" element={<Single />} />
-              <Route
-                path="new"
-                element={
-                  <NewHotel inputs={hotelInputs} title="Add New Hotel" />
-                }
-              />
+              <Route path="new" element={<NewHotel />} />
             </Route>
 
             <Route path="rooms">

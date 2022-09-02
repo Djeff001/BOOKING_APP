@@ -13,6 +13,7 @@ const NewHotel = () => {
   const navigate = useNavigate();
   const { data, loading } = useFetch("/rooms");
   const [hotelInfo, setHotelInfo] = useState({});
+  const [rooms, setRooms] = useState({});
 
   const handleChange = (e) => {
     setHotelInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -23,7 +24,7 @@ const NewHotel = () => {
       e.target.selectedOptions,
       (option) => option.value
     );
-    setHotelInfo((prev) => ({ ...prev, [e.target.id]: selectedRooms }));
+    setRooms(selectedRooms);
   };
 
   const handleClick = async (e) => {
@@ -34,9 +35,9 @@ const NewHotel = () => {
     }
     const newHotel = {
       ...hotelInfo,
-      img: imgRooms,
+      rooms, //don't need key, then name of variable is the same with key
+      photos: imgRooms,
     };
-
     try {
       await axios.post("/Hotels", newHotel);
       navigate("/hotels");

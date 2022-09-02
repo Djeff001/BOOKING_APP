@@ -6,7 +6,6 @@ import New from "./pages/new/New";
 import NewHotel from "./pages/newHotel/NewHotel";
 import NewRoom from "./pages/newRoom/NewRoom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { hotelInputs, productInputs, userInputs } from "./formSource";
 import "./style/dark.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
@@ -53,10 +52,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path="new"
-                element={<New inputs={userInputs} title="Add New User" />}
-              />
+              <Route path="new" element={<New />} />
             </Route>
             <Route path="hotels">
               <Route index element={<List columns={hotelColumns} />} />
@@ -67,10 +63,7 @@ function App() {
             <Route path="rooms">
               <Route index element={<List columns={roomColumns} />} />
               <Route path=":roomId" element={<Single />} />
-              <Route
-                path="new"
-                element={<NewRoom inputs={hotelInputs} title="Add New Room" />}
-              />
+              <Route path="new" element={<NewRoom />} />
             </Route>
           </Route>
         </Routes>
